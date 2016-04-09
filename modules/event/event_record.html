@@ -1,0 +1,119 @@
+<section>
+    VmInclude:__BASE__/vmiis/Common-Code/frame/excel_v2.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/frame/excel_v2.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        //-------------------------------------
+        _fields="Date,Time,Description,Details,Color,Status";
+        _fields+=",Submit Date|DateTime,Submitted by|Author";
+        //-------------------------------------
+        $('#D__ID').on('load',function(){  _set_req(); _request_data();  })
+        //-------------------------------------
+        _columns_process=function(columns){
+            columns[0]={data:'Date',width:120,type: 'date',format: 'DD/MM/YYYY',correctFormat:true};
+            columns[1]={data:'Time',width:110, renderer:function(instance, td, row, col, prop, value, cellProperties){
+        		if(value===undefined || value===null) value="08:00";
+        	    $(td).html("<input type=time value='"+value+"' style='border: 0px solid;' />");
+        	    $(td).find('input').on('change',function(){ $("#excel__ID").handsontable("setDataAtCell", row, col, this.value); });
+                return td;
+            }};
+            columns[4]={data:'Color',width:60, renderer:function(instance, td, row, col, prop, value, cellProperties){
+        		if(value===undefined || value===null){ value="#008800"; $("#excel__ID").handsontable("setDataAtCell", row, col, value); }
+        	    $(td).html("<input type=color value='"+value+"' style='border: 0px solid; background-color:#fff' />");
+        	    $(td).find('input').on('change',function(){ $("#excel__ID").handsontable("setDataAtCell", row, col, this.value); });
+                return td;
+            }};
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            dbv.DT1=record.Date;
+            dbv.S1=record.Time;
+            return true;
+        };
+        //-------------------------------------
+        _records_process=function(records){
+            if($vm.vm['__ID'].op.new!==undefined){
+                $vm.vm['__ID'].op.new=undefined;
+                $('#new__ID').triggerHandler('click');
+                $("#excel__ID").handsontable("setDataAtCell", 0, 0, $vm.vm['__ID'].op.date);
+                $("#excel__ID").handsontable("setDataAtCell", 0, 1, $vm.vm['__ID'].op.time);
+            }
+        };
+        //-------------------------------------
+        _set_req=function(){
+            //-------------------
+            $('#multi__ID').show();
+            if($vm.vm['__ID'].op.new!==undefined || $vm.vm['__ID'].op.sql_where!==undefined){
+                $('#multi__ID').hide();
+            }
+            //-------------------
+            var sql="with tb as (select Information,ID,UID,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] )";
+            sql+="select Information,ID,UID,DateTime,Author,RowNum from tb where RowNum between @I6 and @I7";
+            var sql_n="select count(ID) from [TABLE-"+_db_pid+"-@S1]";
+            //-------------------
+            if($vm.vm['__ID'].op.sql_where!==undefined){
+                var sql_where=$vm.vm['__ID'].op.sql_where;
+                $vm.vm['__ID'].op.sql_where=undefined;
+                sql=sql.replace('RowNum between @I6 and @I7',sql_where);
+                sql_n+=" where "+sql_where;
+            }
+            //-------------------
+            _req={cmd:'query_records',sql:sql,sql_n:sql_n,s1:'"'+$('#keyword__ID').val()+'"',I:$('#I__ID').text(),page_size:$('#page_size__ID').val()}
+        }
+        //-------------------------------------
+        /*
+        //-------------------------------------
+        var fields="Date,Time,Description,Details,Color,Status";
+        fields+=",Submit Date|DateTime,Submitted by|Author";
+        //-------------------------------------
+        //-------------------------------------
+        var m_object=$vm.vm['__ID'];
+        var m_name=m_object.name;
+        //-------------------------------------
+        columns[0]={data:'Date',width:120,type: 'date',format: 'DD/MM/YYYY',correctFormat:true};
+        columns[1]={data:'Time',width:110, renderer:function(instance, td, row, col, prop, value, cellProperties){
+    		if(value===undefined || value===null) value="08:00";
+    	    $(td).html("<input type=time value='"+value+"' style='border: 0px solid;' />");
+    	    $(td).find('input').on('change',function(){ $("#excel__ID").handsontable("setDataAtCell", row, col, this.value); });
+            return td;
+        }};
+        columns[4]={data:'Color',width:60, renderer:function(instance, td, row, col, prop, value, cellProperties){
+    		if(value===undefined || value===null){ value="#008800"; $("#excel__ID").handsontable("setDataAtCell", row, col, value); }
+    	    $(td).html("<input type=color value='"+value+"' style='border: 0px solid; background-color:#fff' />");
+    	    $(td).find('input').on('change',function(){ $("#excel__ID").handsontable("setDataAtCell", row, col, this.value); });
+            return td;
+        }};
+        //-------------------------------------
+        var before_submit=function(record,dbv){
+            dbv.DT1=record.Date;
+            dbv.S1=record.Time;
+            return true;
+        };
+        //-------------------------------------
+        var sql_where="";
+        $('#D__ID').on('load',function(){
+            sql_where=m_object.op.sql_where;
+            $('#multi__ID').show();
+            if(m_object.op.single===true) $('#multi__ID').hide();
+            grid_data();
+        })
+        //-------------------------------------
+        var grid_process=function(res){
+            if(m_object.op.new!==undefined){
+                m_object.op.new=undefined;
+                $('#new__ID').triggerHandler('click');
+                $("#excel__ID").handsontable("setDataAtCell", 0, 0, m_object.op.date);
+                $("#excel__ID").handsontable("setDataAtCell", 0, 1, m_object.op.time);
+                $("#excel__ID").handsontable("render");
+            }
+        };
+        //-------------------------------------
+        */
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/style/default.css
+</style>
