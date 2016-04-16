@@ -10,23 +10,21 @@
         _fields="Date,Time,Description,Details,Color,Status";
         _fields+=",Submit Date|DateTime,Submitted by|Author";
         //-------------------------------------
-        $('#D__ID').on('load',function(){  _set_req(); _request_data();  })
-        //-------------------------------------
-        _columns_process=function(columns){
-            columns[0]={data:'Date',width:120,type: 'date',format: 'DD/MM/YYYY',correctFormat:true};
-            columns[1]={data:'Time',width:110, renderer:function(instance, td, row, col, prop, value, cellProperties){
-        		//if(value===undefined || value===null) value="08:00";
+        _table_process=function(table){
+            table.Date={width:120,type: 'date',format: 'DD/MM/YYYY',correctFormat:true};
+            table.Time={width:110, renderer:function(instance, td, row, col, prop, value, cellProperties){
         	    $(td).html("<input type=time value='"+value+"' style='border: 0px solid;' />");
         	    $(td).find('input').on('change',function(){ $("#excel__ID").handsontable("setDataAtCell", row, col, this.value); });
                 return td;
             }};
-            columns[4]={data:'Color',width:60, renderer:function(instance, td, row, col, prop, value, cellProperties){
-        		//if(value===undefined || value===null){ value="#008800"; $("#excel__ID").handsontable("setDataAtCell", row, col, value); }
+            table.Color={width:60, renderer:function(instance, td, row, col, prop, value, cellProperties){
         	    $(td).html("<input type=color value='"+value+"' style='border: 0px solid; background-color:#fff' />");
         	    $(td).find('input').on('change',function(){ $("#excel__ID").handsontable("setDataAtCell", row, col, this.value); });
                 return td;
             }};
         }
+        //-------------------------------------
+        $('#D__ID').on('load',function(){  _set_req(); _request_data();  })
         //-------------------------------------
         _before_submit=function(record,dbv){
             dbv.DT1=record.Date;
@@ -34,7 +32,7 @@
             return true;
         };
         //-------------------------------------
-        _records_process=function(records){
+        _data_process=function(records){
             if($vm.vm['__ID'].op.new!==undefined){
                 $vm.vm['__ID'].op.new=undefined;
                 $('#new__ID').triggerHandler('click');
@@ -46,6 +44,12 @@
         _new_pre_data_process=function(){
             $("#excel__ID").handsontable("setDataAtCell", 0, 1, "08:00");
             $("#excel__ID").handsontable("setDataAtCell", 0, 4, "#008800");
+        }
+        //-------------------------------------
+        _after_submit_all=function(type,res){
+            if(type=='add'){
+                $vm.vm['__ID'].op.sql_where=" ID="+res.ret;
+            }
         }
         //-------------------------------------
         _set_req=function(){
