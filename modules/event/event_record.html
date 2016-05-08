@@ -54,8 +54,9 @@
         //-------------------------------------
         _set_req=function(){
             //-------------------
+            $('#new__ID').hide(); //always hide
             $('#multi__ID').show();
-            if($vm.vm['__ID'].op.new!==undefined || $vm.vm['__ID'].op.sql_where!==undefined){
+            if($vm.vm['__ID'].op.new!==undefined || $vm.vm['__ID'].op.sql_where!==''){
                 $('#multi__ID').hide();
             }
             //-------------------
@@ -63,9 +64,8 @@
             sql+="select Information,ID,UID,DateTime,Author,RowNum from tb where RowNum between @I6 and @I7";
             var sql_n="select count(ID) from [TABLE-"+_db_pid+"-@S1]";
             //-------------------
-            if($vm.vm['__ID'].op.sql_where!==undefined){
+            if($vm.vm['__ID'].op.sql_where!==''){
                 var sql_where=$vm.vm['__ID'].op.sql_where;
-                $vm.vm['__ID'].op.sql_where=undefined;
                 sql=sql.replace('RowNum between @I6 and @I7',sql_where);
                 sql_n+=" where "+sql_where;
             }
